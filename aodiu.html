@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Music Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .audio {
+            width: 400px;
+            height: 200px;
+            background-color: #f40;
+            position: relative;
+        }
+
+        .par {
+            width: 200px;
+            height: 4px;
+            background-color: #fff;
+            border-radius: 4px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+        }
+
+        .solid {
+            width: 0px;
+            height: 4px;
+            border-radius: 4px;
+            background-color: #000;
+            cursor: pointer;
+        }
+
+        .lrcBOx {
+            height: 56px;
+            line-height: 1.5;
+            padding-bottom: 20px;
+            width: 100%;
+            background: #5e5e5e;
+            text-align: center;
+            font-size: 16px;
+            color: hsla(0,0%,100%,.6);
+            overflow: hidden;
+        }
+        .selection {
+            color: #fff;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="audio">
+        <span id="songtimed">00:00</span>
+        <div class="par" id="par" onmousedown="changeProgress(event)">
+            <div class="solid" id="solid"></div>
+        </div>
+        <span id="songtiming">00:00</span>
+        <button onclick="backIndex()">上一首</button>
+        <button onclick="play()">播放/暂停</button>
+        <button onclick="nextIndex()">下一首</button>
+        <button onclick="state()" id="state">循序播放</button>
+    </div>
+    <div class="lrcBOx">
+        <div id="lyric"></div>
+    </div>
+    <textarea id="lrc_content" cols="30" style="display: none">
+        [00:00.36]1987我不知会遇见你(现场版) - 李宇春  
+        [00:00.84]词：李宇春
+        [00:00.99]曲：孙侨志
+        [00:01.14]编曲：程天禹&TYZ
+        [00:01.35]音乐设计：谭伊哲&TYZ
+        [00:19.26]下一整夜的暴雨
+        [00:21.17]让我只想静静抱着你
+        [00:25.51]Babe
+        [00:27.45]谈谈我们的过去
+        [00:29.60]看看漫步半生的轨迹
+        [00:33.88]Babe
+        [00:35.20]亲爱的如果时光倒退一回
+        [00:40.22]你最想和谁喝两杯不醉不归
+        [00:44.70]那一个人还会是我吗
+        [00:48.39]我们还会不会把野草当作玫瑰
+        [00:52.49]下一整夜的暴雨
+        [00:54.55]让我只想静静抱着你
+        [00:58.90]Babe
+        [01:00.91]谈谈我们的过去
+        [01:02.91]看看漫步半生的轨迹
+        [01:07.23]Babe
+        [01:08.68]亲爱的谢谢你陪伴安慰
+        [01:13.32]不管是春风得意或绝望颓废
+        [01:17.88]晓得了人言可畏
+        [01:21.84]好像才三十岁却聪明了三十倍
+        [01:25.75]我不知会遇见你
+        [01:28.09]那年1987
+        [01:30.62]夜空有好多闪烁星星
+        [01:34.35]爱是纯白的愿意
+        [01:36.37]我是我你也只是你
+        [01:42.24]我不知会遇见你
+        [01:44.74]那年1987
+        [01:47.30]感动会来得轻而易举
+        [01:51.02]浪漫也还很便宜
+        [01:53.09]情是情趣也只是趣
+        [01:59.26]摔过跤的石板路
+        [02:01.38]早就被需求无情拆除
+        [02:05.32]不复
+        [02:07.76]最火热的流行歌
+        [02:09.80]也已经随岁月改名叫复古
+        [02:13.97]记住
+        [02:15.42]亲爱的看看那些物是人非
+        [02:20.34]别忘记我们萌芽时多么珍贵
+        [02:24.85]现实最拿手不动声色的潜规
+        [02:29.47]把最初的信念步步拖溃
+        [02:32.70]我不知会遇见你
+        [02:34.84]那年1987
+        [02:37.37]夜空有好多闪烁星星
+        [02:41.09]爱是纯白的愿意
+        [02:43.20]我是我你也只是你
+        [02:48.87]我不知会遇见你
+        [02:51.44]那年1987
+        [02:54.06]感动会来得轻而易举
+        [02:57.78]浪漫也还很便宜
+        [02:59.83]情是情趣也只是趣
+        [03:22.36]我不知会遇见你
+        [03:24.81]那年1987
+        [03:27.30]夜空有好多闪烁星星
+        [03:31.12]爱是纯白的愿意
+        [03:33.15]我是我你也只是你
+        [03:38.94]我不知会遇见你
+        [03:41.50]那年1987
+        [03:44.05]感动会来得轻而易举
+        [03:47.81]浪漫也还很便宜
+        [03:49.92]情是情趣也只是趣
+        [03:57.13]我不知会遇见你
+        [03:59.05]那年1987
+        [04:01.20]我不知会遇见你
+        [04:03.23]那年1987
+        [04:05.33]我不知会遇见你
+        [04:07.41]那年1987
+        [04:09.48]我不知会遇见你
+        [04:11.60]那年1987
+        [04:13.66]
+    </textarea>
+    <script>
+        let songList = [
+            { musicSrc: "./李宇春-1987我不知会遇见你(现场版).flac"},
+            { musicSrc: "./李宇春-唐人街-(电影《唐人街探案》主题曲).flac"},
+            { musicSrc: './李宗盛-山丘.flac'},
+            { musicSrc: './Galantis&OneRepublic-Bones.mp3'},
+        ]
+
+        // 创建一个audio对象
+        let Audio = document.createElement('AUDIO');
+        // 播放状态
+        let playstatus = false
+        //默认播放第一首
+        let PlayingIndex = 0;
+        // 播放的顺序 随机(random) / 顺序(order) 默认循序
+        let order = 'order';
+        let orderIndex = true
+        //正在播放的歌曲
+        let MusicPlaying = songList[PlayingIndex].musicSrc;
+        //歌词
+        let lrc = document.getElementById("lrc_content").innerHTML;
+        let oLRC = {
+            ti: "", //歌曲名
+            ar: "", //演唱者
+            al: "", //专辑名
+            by: "", //歌词制作人
+            offset: 0, //时间补偿值，单位毫秒，用于调整歌词整体位置
+            ms: [] //歌词数组{t:时间,c:歌词}
+        };
+        // 获取dom节点 --进度条
+        let par = document.getElementsByClassName('par')[0];
+        let solid = document.getElementsByClassName('solid')[0];
+        // 设置播放器的属性
+        Audio.setAttribute("src", MusicPlaying)
+        Audio.setAttribute("autoplay", "autoplay")
+        // 播放/暂停
+        function play() {
+            if (playstatus) {
+                Audio.pause()
+                playstatus = false
+            } else {
+                Audio.play()
+                playstatus = true
+                curBar()
+                changeTime()
+                changeTimeing()
+            }
+        }
+        // 进度条时间同步
+        function curBar() {
+            solid.style.width = 0 + "px";
+            timer1 = setInterval(function () {
+                //获取当前的播放时间
+                lenth = Audio.duration;
+                cur = Audio.currentTime;
+                // 当前时间 / 总时间 = 百分比
+                // 百分比 * 进度条长度 = 播放时间长度进度
+                solid.style.width = "" + parseFloat(cur / lenth) * 200 + "px";
+            }, 50)
+        }
+        // 获取歌曲播放总时间 转换为分：秒 
+        function changeTime() {
+            let dur = Audio.duration
+            let min = parseInt(dur / 60)
+            let sec = parseInt(dur % 60)
+            let songtimed = document.getElementById('songtimed');
+            if (min < 10) {
+                if (sec < 10) {
+                    songtimed.innerHTML = '0' + min + ':' + '0' + sec
+                } else {
+                    songtimed.innerHTML = '0' + min + ':' + sec
+                }
+            } else {
+                if (sec < 10) {
+                    songtimed.innerHTML = min + ':' + '0' + sec
+                } else {
+                    songtimed.innerHTML = min + ':' + sec
+                }
+            }
+        }
+        // 歌曲正在播放的时间 转换为分：秒
+        function changeTimeing(params) {
+            setInterval(() => {
+                cur = Audio.currentTime
+                let min = parseInt(cur / 60)
+                let sec = parseInt(cur % 60)
+                if (min < 10) {
+                    if (sec < 10) {
+                        let songtiming = document.getElementById('songtiming');
+                        songtiming.innerHTML = '0' + min + ":" + '0' + sec
+                    } else {
+                        let songtiming = document.getElementById('songtiming');
+                        songtiming.innerHTML = '0' + min + ":" + sec
+                    }
+                } else {
+                    if (sec < 10) {
+                        let songtiming = document.getElementById('songtiming');
+                        songtiming.innerHTML = min + ":" + '0' + sec
+                    } else {
+                        let songtiming = document.getElementById('songtiming');
+                        songtiming.innerHTML = min + ":" + sec
+                    }
+                }
+            }, 50);
+        }
+        //调整播放进度
+        function changeProgress(e) {
+            let bar = e.target;
+            let x = e.offsetX;
+            let lenth = Audio.duration;
+            solid.style.width = x + "px";
+            Audio.currentTime = "" + parseInt(x * lenth / 200) + "";
+            Audio.play();
+        }
+        //切换歌曲
+        function nextIndex() {
+            if (PlayingIndex > songList.length - 1) {
+                PlayingIndex = songList.length - 1
+                alert('没有更多了o(╥﹏╥)o')
+            } else {
+                PlayingIndex++
+                MusicPlaying = songList[PlayingIndex].musicSrc;
+                Audio.setAttribute("src", MusicPlaying)
+                //监听播放器src改变后，获取歌曲长度
+                Audio.addEventListener("canplay", function () {
+                    Audio.play()
+                    curBar()
+                    changeTime()
+                    changeTimeing()
+                });
+            }
+        }
+        function backIndex() {
+            if (PlayingIndex <= 0) {
+                PlayingIndex = 0
+                alert('已经是第一首了o(╥﹏╥)o')
+            } else {
+                PlayingIndex--
+                MusicPlaying = songList[PlayingIndex].musicSrc;
+                Audio.setAttribute("src", MusicPlaying)
+                //监听播放器src改变后，获取歌曲长度
+                Audio.addEventListener("canplay", function () {
+                    Audio.play()
+                    curBar()
+                    changeTime()
+                    changeTimeing()
+                });
+            }
+        }
+        // 播放完自动下一曲
+        Audio.onended = function () {
+            console.log("音频播放完成");
+            //清空定时器和一些属性
+            if(timer1){
+                clearInterval(timer1)
+            }           
+            if (order == 'order') {
+                nextIndex()
+            } else {
+                random()
+            }
+        };
+        //随机播放
+        function random() {
+            let randomIndex = parseInt(Math.random() * songList.length)
+            console.log(randomIndex)
+            MusicPlaying = songList[randomIndex].musicSrc;
+            Audio.setAttribute("src", MusicPlaying)
+            Audio.addEventListener("canplay", function () {
+                Audio.play()
+                curBar()
+                changeTime()
+                changeTimeing()
+            });
+        }
+        //改变播放顺序的状态
+        function state() {
+            if (orderIndex) {
+                order = 'random'
+                orderIndex = false
+            } else {
+                order = 'order'
+                orderIndex = true
+                PlayingIndex = 0
+            }
+            console.log(orderIndex)
+            let btn = document.getElementById('state');
+            btn.innerHTML = order
+        }
+        // 解析歌词
+        function createLrcObj(lrc) {
+            if(lrc.length==0) return;
+            let lrcs = lrc.split('\n');//用回车拆分成数组
+            for(let i in lrcs) {//遍历歌词数组
+                lrcs[i] = lrcs[i].replace(/(^\s*)|(\s*$)/g, ""); //去除前后空格
+                let t = lrcs[i].substring(lrcs[i].indexOf("[") + 1, lrcs[i].indexOf("]"));//取[]间的内容
+                let s = t.split(":");//分离:前后文字
+                if(isNaN(parseInt(s[0]))) { //不是数值
+                    for (let i in oLRC) {
+                        if (i != "ms" && i == s[0].toLowerCase()) {
+                            oLRC[i] = s[1];
+                        }
+                    }
+                }else { //是数值
+                    let arr = lrcs[i].match(/\[(\d+:.+?)\]/g);//提取时间字段，可能有多个
+                    let start = 0;
+                    for(let k in arr){
+                        start += arr[k].length; //计算歌词位置
+                    }
+                    let content = lrcs[i].substring(start);//获取歌词内容
+                    for (let k in arr){
+                        let t = arr[k].substring(1, arr[k].length-1);//取[]间的内容
+                        let s = t.split(":");//分离:前后文字
+                        oLRC.ms.push({//对象{t:时间,c:歌词}加入ms数组
+                            t: (parseFloat(s[0])*60+parseFloat(s[1])).toFixed(3),
+                            c: content
+                        });
+                    }
+                }
+            }
+            oLRC.ms.sort(function (a, b) {//按时间顺序排序
+                return a.t-b.t;
+            });
+        }
+        createLrcObj(lrc);
+        // 展现歌词
+        function showLRC() {
+            let songLrc = "";
+            for(let i in oLRC.ms){//遍历ms数组，把歌词加入列表
+                songLrc += '<div data-timeline="'+parseInt(oLRC.ms[i].t)+'">' + oLRC.ms[i].c + '</div>';
+            }
+            document.getElementById("lyric").innerHTML = songLrc;
+        }
+        showLRC();
+        Audio.addEventListener('timeupdate', function(e) {
+                let time = parseInt(e.target.currentTime);
+                let lines = document.querySelectorAll('[data-timeline]');
+                let top = 0;
+                let _thisHeight = 0;
+                let nextLine = {
+                    i: 0,
+                    time: 0
+                };
+                for (let i in lines) {
+                    let line = lines[i];
+                    if (line.dataset != undefined) {
+                        let timeline = parseInt(line.dataset.timeline);
+                        if (timeline == time) {
+                            _thisHeight = line.clientHeight;
+                            line.className = "selection";
+                            //获取下一句歌词
+                            nextLine.i = parseInt(i) + 1;
+                            try {
+                                nextLine.time = lines[nextLine.i].dataset.timeline;
+                            }
+                            catch (e) {
+                            }
+                            if (nextLine.time > 0) {
+                                let interval = nextLine.time - timeline;
+                                (function(k) {
+                                    setTimeout(function() {
+                                        lines[k].className = "";
+                                    }, interval * 1000);
+                                })(i);
+                            }
+                            let a = -(top - _thisHeight) + "px"
+                            document.querySelector('#lyric').style.transform ="translateY(" + a + ")";
+                        }
+                        else if (timeline < time) {
+                            top += line.clientHeight;
+                        }
+                    }
+                }
+        })
+        
+    </script>
+</body>
+
+</html>
